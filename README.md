@@ -1,12 +1,12 @@
 # Shane the Taxman 2
 
-A mobile-friendly, browser-based turn-based tactics game in the spirit of *Fire Emblem* and *Advance Wars*. Pick a squad of four, deploy onto an 8×8 grid, and take down The CEO and their minions.
+A mobile-friendly, browser-based turn-based tactics game. Pick a squad of four, deploy onto an 8×8 grid, and take down The CEO and their minions.
 
 Built as a single static site — pure HTML, CSS, and vanilla JavaScript, no build step and no dependencies.
 
 ## Play
 
-**Live demo:** _(update with your GitHub Pages URL once deployed)_
+https://economist1895.github.io/shane-taxman-2/
 
 Tap **TAP TO START**, choose four heroes from the roster, then:
 
@@ -47,35 +47,3 @@ The enemy team is led by **The CEO** (a boss archer with a +3 ATK aura) and thei
 ├── js/
 │   └── game.js     # game logic, combat, AI, rendering
 └── sprites/        # PNG sprite sheets (soldier / archer / mage, tree)
-```
-
-No build, no bundler, no package manager. Open `index.html` in a browser and it runs.
-
-## Running locally
-
-Because the game loads sprite sheets via `<img>`, it needs to be served over HTTP (not `file://`). Any static server works:
-
-```bash
-# Python
-python3 -m http.server 8000
-
-# Node
-npx serve .
-```
-
-Then open <http://localhost:8000>.
-
-## Deploying to GitHub Pages
-
-1. Push this repo to GitHub.
-2. In the repo, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
-4. Choose the branch (e.g. `main`) and the `/ (root)` folder, then **Save**.
-5. After a minute, the site will be live at `https://<username>.github.io/<repo>/`.
-
-No build step or GitHub Action is required — the whole site is static.
-
-## Credits
-
-- Sprites from the [Tiny Swords](https://pixelfrog-assets.itch.io/tiny-swords) pack by Pixel Frog.
-- Font: [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P).
