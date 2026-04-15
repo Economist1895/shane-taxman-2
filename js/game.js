@@ -1295,12 +1295,14 @@ function checkPhaseEnd() {
 // ============================================================
 
 function updateUI() {
-    // Top bar — hide on title / gameover screens
-    const topBar = $('top-bar');
-    if (state.phase === 'title' || state.phase === 'gameover') {
-        topBar.classList.add('hidden');
-    } else {
-        topBar.classList.remove('hidden');
+    // Top bar + info/action panels — hide on title / gameover screens
+    const hideChrome = state.phase === 'title' || state.phase === 'gameover';
+    $('top-bar').classList.toggle('hidden', hideChrome);
+    $('info-panel').classList.toggle('hidden', hideChrome);
+    $('action-panel').classList.toggle('hidden', hideChrome);
+    if (hideChrome) {
+        // Skip the rest — nothing to update while those panels are hidden.
+        return;
     }
     $('turn-info').textContent = 'Turn ' + state.turnNumber;
     $('phase-label').textContent =
