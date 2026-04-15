@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Shane the Taxman 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="top-bar" class="hidden">
+            <span id="turn-info">Turn 1</span>
+            <span id="phase-label">Player Phase</span>
+        </div>
+
+        <div id="canvas-wrap">
+            <canvas id="game-canvas"></canvas>
+            <div id="phase-banner" class="hidden"></div>
+            <div id="title-screen">
+                <h1>SHANE THE<br>TAXMAN 2</h1>
+                <p class="subtitle">Turn-based Strategy</p>
+                <button id="btn-start">TAP TO START</button>
+            </div>
+            <div id="gameover-screen" class="hidden">
+                <h2 id="gameover-text">VICTORY</h2>
+                <button id="btn-restart">PLAY AGAIN</button>
+            </div>
+        </div>
+
+        <div id="select-screen" class="hidden">
+            <div class="select-header">
+                <h2>CHOOSE YOUR SQUAD</h2>
+                <p>Pick 4 units. Tap a card to view stats and abilities.</p>
+            </div>
+            <div id="select-grid"></div>
+            <div id="select-detail"></div>
+            <div class="select-footer">
+                <span id="select-count">0/4</span>
+                <button id="btn-start-battle" disabled>START BATTLE</button>
+            </div>
+        </div>
+
+        <div id="info-panel">
+            <div id="unit-info" class="empty">
+                <span class="hint">Select a unit</span>
+            </div>
+        </div>
+
+        <div id="action-panel">
+            <button id="btn-wait" class="action-btn hidden">Wait</button>
+            <button id="btn-cancel" class="action-btn hidden">Cancel</button>
+            <button id="btn-end-turn" class="action-btn hidden">End Turn</button>
+        </div>
+
+        <div id="combat-preview" class="hidden">
+            <div class="cp-box">
+                <div class="cp-header">COMBAT FORECAST</div>
+                <div class="cp-body">
+                    <div class="cp-side" id="cp-attacker">
+                        <div class="cp-name"></div>
+                        <div class="cp-hp"></div>
+                        <div class="cp-dmg"></div>
+                        <div class="cp-hits"></div>
+                    </div>
+                    <div class="cp-vs">VS</div>
+                    <div class="cp-side" id="cp-defender">
+                        <div class="cp-name"></div>
+                        <div class="cp-hp"></div>
+                        <div class="cp-dmg"></div>
+                        <div class="cp-hits"></div>
+                    </div>
+                </div>
+                <div class="cp-buttons">
+                    <button id="btn-fight">FIGHT</button>
+                    <button id="btn-cp-cancel">CANCEL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
