@@ -54,6 +54,85 @@ html, body {
     color: #6eebff;
 }
 
+#btn-menu {
+    background: transparent;
+    border: 2px solid #3a3a5e;
+    color: #ffd166;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 4px 10px;
+    min-height: 32px;
+    min-width: 40px;
+    letter-spacing: 0;
+    line-height: 1;
+}
+
+#btn-menu:hover,
+#btn-menu:active {
+    border-color: #ffd166;
+}
+
+/* ===== MENU OVERLAY ===== */
+#menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(11, 11, 20, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.menu-box {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 240px;
+    max-width: 320px;
+    width: 100%;
+}
+
+.menu-title {
+    font-size: 1rem;
+    color: #ffd166;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.menu-btn {
+    min-height: 44px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: #fff;
+    background: #1a1a2e;
+    border: 2px solid #3a3a5e;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+.menu-btn:hover,
+.menu-btn:active {
+    border-color: #6eebff;
+    background: #1f3a5e;
+}
+
+#btn-menu-restart {
+    border-color: #e94560;
+}
+
+#btn-menu-restart:hover,
+#btn-menu-restart:active {
+    border-color: #ff7a90;
+    background: #3a1a2a;
+}
+
 /* ===== CANVAS ===== */
 #canvas-wrap {
     flex: 1 1 auto;
@@ -168,7 +247,10 @@ html, body {
     background: #16213e;
     border-top: 2px solid #0f3460;
     padding: 8px 10px;
-    min-height: 54px;
+    /* Fixed height so selecting a unit doesn't resize the canvas mid-battle.
+       Scales with responsive font-size. */
+    height: 9em;
+    overflow-y: auto;
 }
 
 #unit-info {
@@ -581,16 +663,20 @@ html, body {
 
 .sb-track {
     flex: 1 1 auto;
-    height: 8px;
-    background: #0b0b14;
-    border: 1px solid #0f3460;
-    position: relative;
+    height: 10px;
+    display: flex;
+    gap: 2px;
 }
 
-.sb-fill {
-    display: block;
-    height: 100%;
-    background: linear-gradient(90deg, #6eebff, #4a8acc);
+.sb-seg {
+    flex: 1 1 0;
+    background: #0b0b14;
+    border: 1px solid #0f3460;
+}
+
+.sb-seg.filled {
+    background: #6eebff;
+    border-color: #9af3ff;
 }
 
 .sb-val {
@@ -678,4 +764,215 @@ html, body {
 
 #btn-start-battle:disabled {
     cursor: not-allowed;
+}
+
+/* ===== MAP SELECTION SCREEN ===== */
+#map-select-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: #0b0b14;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 10px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    max-width: 640px;
+    margin: 0 auto;
+    overflow-y: auto;
+}
+
+#map-grid {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.map-card {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #16213e;
+    border: 2px solid #0f3460;
+    padding: 12px 14px;
+    font-family: inherit;
+    color: #cfcfe3;
+    cursor: pointer;
+    min-height: 72px;
+}
+
+.map-card:hover,
+.map-card:active {
+    border-color: #6eebff;
+    background: #1f3a5e;
+}
+
+.map-card .mc-name {
+    font-size: 0.95rem;
+    color: #ffd166;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.map-card .mc-bias {
+    font-size: 0.6rem;
+    color: #e94560;
+    letter-spacing: 1px;
+}
+
+.how-to-play-btn {
+    flex: 0 0 auto;
+    margin-top: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    color: #6eebff;
+    background: #1a1a2e;
+    border: 2px solid #0f3460;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+.how-to-play-btn:hover,
+.how-to-play-btn:active {
+    border-color: #6eebff;
+    background: #1f3a5e;
+}
+
+.back-btn {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    color: #cfcfe3;
+    background: #1a1a2e;
+    border: 2px solid #3a3a5e;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+/* ===== HOW-TO-PLAY GUIDE ===== */
+#guide-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(11, 11, 20, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    padding-top: calc(16px + env(safe-area-inset-top));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+.guide-box {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    width: 100%;
+    max-width: 520px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.guide-header {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    color: #ffd166;
+    letter-spacing: 2px;
+    border-bottom: 2px solid #0f3460;
+    background: #0f1829;
+}
+
+#btn-guide-close {
+    background: transparent;
+    border: none;
+    color: #cfcfe3;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    min-height: 32px;
+    min-width: 32px;
+}
+
+#btn-guide-close:hover,
+#btn-guide-close:active {
+    color: #6eebff;
+}
+
+.guide-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 12px 14px 16px;
+    font-size: 0.65rem;
+    line-height: 1.7;
+    color: #cfcfe3;
+}
+
+.guide-body h3 {
+    font-size: 0.75rem;
+    color: #6eebff;
+    letter-spacing: 2px;
+    margin: 14px 0 6px;
+}
+
+.guide-body h3:first-child {
+    margin-top: 0;
+}
+
+.guide-body p {
+    margin: 0 0 8px;
+}
+
+.guide-body ol,
+.guide-body ul {
+    margin: 0 0 8px;
+    padding-left: 18px;
+}
+
+.guide-body li {
+    margin-bottom: 4px;
+}
+
+.guide-body b {
+    color: #ffd166;
+}
+
+.guide-body .stat-list b {
+    display: inline-block;
+    min-width: 34px;
+    color: #ffd166;
+}
+
+.guide-body .s-hp  { color: #6eebff; }
+.guide-body .s-atk { color: #e94560; }
+.guide-body .s-def { color: #9ad2ff; }
+.guide-body .s-res { color: #c79cff; }
+.guide-body .s-spd { color: #8bf0a0; }
+
+/* ===== SELECT DETAIL TITLE + UNIT-INFO TITLE ===== */
+.sd-title {
+    font-size: 0.6rem;
+    color: #9ad2ff;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.unit-title {
+    font-size: 0.55rem;
+    color: #9ad2ff;
+    letter-spacing: 1px;
+    margin-left: 6px;
+    font-weight: normal;
 }

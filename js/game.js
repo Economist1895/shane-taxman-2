@@ -27,18 +27,84 @@ const TREE = 1;
 const WATER = 2;
 
 // Map layout (8x8). 0 = grass, 1 = tree, 2 = water (impassable).
-// Asymmetric: a small pond just above center + two scattered trees for cover.
-// Flanks are wide open so the scout can swing around.
-const MAP = [
-    [0,0,0,0,0,0,0,0], // row 0 — enemy deploy
-    [0,0,0,0,0,0,0,0], // row 1
-    [0,0,0,2,2,0,0,0], // row 2 — pond top
-    [0,0,0,0,2,0,0,0], // row 3 — pond tail
-    [0,1,0,0,0,0,0,0], // row 4 — scattered tree (left)
-    [0,0,0,0,0,0,1,0], // row 5 — scattered tree (right)
-    [0,0,0,0,0,0,0,0], // row 6
-    [0,0,0,0,0,0,0,0], // row 7 — player deploy
-];
+// Three maps. Each has its own terrain grid + enemy composition.
+// Player deploy is always the bottom row (row 7, cols 2-5).
+// MAP (below) holds the active map's terrain; it's swapped in at startGame().
+const MAPS = {
+    audit: {
+        name: 'L1 Lounge',
+        bias: 'Balanced enemies',
+        // A small pond + two scattered trees. Flanks open for the scout.
+        terrain: [
+            [0,0,0,0,0,0,0,0], // row 0 — enemy deploy
+            [0,0,0,0,0,0,0,0], // row 1
+            [0,0,0,2,2,0,0,0], // row 2 — pond top
+            [0,0,0,0,2,0,0,0], // row 3 — pond tail
+            [0,1,0,0,0,0,0,0], // row 4 — scattered tree (left)
+            [0,0,0,0,0,0,1,0], // row 5 — scattered tree (right)
+            [0,0,0,0,0,0,0,0], // row 6
+            [0,0,0,0,0,0,0,0], // row 7 — player deploy
+        ],
+        enemies: [
+            { key: 'minion_arc', x: 1, y: 0 },
+            { key: 'director',   x: 3, y: 0 },
+            { key: 'ceo',        x: 4, y: 0 },
+            { key: 'minion_sol', x: 5, y: 0 },
+            { key: 'minion_mag', x: 6, y: 0 },
+        ],
+    },
+    open_season: {
+        name: 'L24 Board Room',
+        bias: 'Ranged-heavy',
+        // Wide open rooftop — just a central tree cluster for cover.
+        terrain: [
+            [0,0,0,0,0,0,0,0], // row 0 — enemy deploy
+            [0,0,0,0,0,0,0,0], // row 1
+            [0,0,0,0,0,0,0,0], // row 2
+            [0,0,0,1,1,0,0,0], // row 3 — tree cluster (center)
+            [0,0,0,1,1,0,0,0], // row 4 — tree cluster (center)
+            [0,0,0,0,0,0,0,0], // row 5
+            [0,0,0,0,0,0,0,0], // row 6
+            [0,0,0,0,0,0,0,0], // row 7 — player deploy
+        ],
+        enemies: [
+            { key: 'minion_arc', x: 1, y: 0 },
+            { key: 'director',   x: 3, y: 0 },
+            { key: 'ceo',        x: 4, y: 0 },
+            { key: 'minion_mag', x: 5, y: 0 },
+            { key: 'minion_arc', x: 6, y: 0 },
+        ],
+    },
+    loophole: {
+        name: 'L5 Auditorium',
+        bias: 'Tank-heavy — choke point',
+        // Horizontal river splits rows 3-4 with bridges at cols 2 and 5.
+        // Trees flank the bridges so archers can't shoot straight through.
+        terrain: [
+            [0,0,0,0,0,0,0,0], // row 0 — enemy deploy
+            [0,0,0,0,0,0,0,0], // row 1
+            [0,1,0,0,1,0,0,1], // row 2 — trees flank bridges
+            [2,2,0,2,2,0,2,2], // row 3 — river (bridges at col 2, 5)
+            [2,2,0,2,2,0,2,2], // row 4 — river (bridges at col 2, 5)
+            [0,0,0,0,0,0,0,0], // row 5
+            [0,0,0,0,0,0,0,0], // row 6
+            [0,0,0,0,0,0,0,0], // row 7 — player deploy
+        ],
+        enemies: [
+            { key: 'minion_arc', x: 1, y: 0 },
+            { key: 'ceo',        x: 4, y: 0 },
+            { key: 'director',   x: 5, y: 0 },
+            { key: 'minion_sol', x: 2, y: 2 }, // camping left bridge
+            { key: 'minion_sol', x: 5, y: 2 }, // camping right bridge
+        ],
+    },
+};
+
+const DEFAULT_MAP_KEY = 'audit';
+const MAP_ORDER = ['audit', 'open_season', 'loophole'];
+
+// Active terrain grid. Mutable — reassigned at the start of each battle.
+let MAP = MAPS[DEFAULT_MAP_KEY].terrain;
 
 // Class defaults — range, damage type, movement. Stats come from CHARACTERS.
 const CLASS_DEFAULTS = {
@@ -51,19 +117,19 @@ const CLASS_DEFAULTS = {
 // Ability effects are not yet implemented — this table is the source of truth for stats/names.
 const CHARACTERS = {
     // --- Player: soldiers ---
-    ryan:      { name: 'Ryan',      class: 'soldier', role: 'Scout',     hp: 20, atk: 7,  def: 5, spd: 9, res: 3, ability: { id: 'tax_mobile',    name: 'Tax Mobile of Justice' } },
-    sylvester: { name: 'Sylvester', class: 'soldier', role: 'DPS',       hp: 22, atk: 12, def: 6, spd: 4, res: 2, ability: { id: 'hammer',        name: 'Hammer of Justice' } },
-    richmond:  { name: 'Richmond',  class: 'soldier', role: 'Lifesteal', hp: 24, atk: 9,  def: 6, spd: 5, res: 2, ability: { id: 'tax_recovery',  name: 'Tax Recovery' } },
-    shaun:     { name: 'Shaun',     class: 'soldier', role: 'Tank',      hp: 28, atk: 7,  def: 10, spd: 2, res: 4, ability: { id: 'sleepless_panda', name: 'Sleepless Panda' } },
-    jiawei:    { name: 'Jiawei',    class: 'soldier', role: 'Medic',     hp: 26, atk: 6,  def: 7, spd: 4, res: 5, ability: { id: 'blood_donation', name: 'Blood Donation' } },
+    ryan:      { name: 'Ryan Li',          shortName: 'Ryan',      title: 'Investigator',             class: 'soldier', role: 'Scout',     hp: 20, atk: 7,  def: 5, spd: 9, res: 3, ability: { id: 'tax_mobile',    name: 'Tax Mobile of Justice' } },
+    sylvester: { name: 'Sylvester Sim',    shortName: 'Sylvester', title: 'Legal Associate',          class: 'soldier', role: 'DPS',       hp: 22, atk: 12, def: 6, spd: 4, res: 2, ability: { id: 'hammer',        name: 'Hammer of Justice' } },
+    richmond:  { name: 'Richmond Yeo',     shortName: 'Richmond',  title: 'Auditor',                  class: 'soldier', role: 'Lifesteal', hp: 24, atk: 10, def: 6, spd: 5, res: 2, ability: { id: 'tax_recovery',  name: 'Tax Recovery' } },
+    shaun:     { name: 'Shaun Tan',        shortName: 'Shaun',     title: 'Tax Specialist',           class: 'soldier', role: 'Tank',      hp: 28, atk: 7,  def: 10, spd: 2, res: 4, ability: { id: 'sleepless_panda', name: 'Sleepless Panda' } },
+    jiawei:    { name: 'Jiawei Tian',      shortName: 'Jiawei',    title: 'Software Developer',       class: 'soldier', role: 'Medic',     hp: 26, atk: 6,  def: 7, spd: 4, res: 5, ability: { id: 'blood_donation', name: 'Blood Donation' } },
     // --- Player: archers ---
-    annie:     { name: 'Annie',     class: 'archer',  role: 'Tank',      hp: 24, atk: 7,  def: 8, spd: 4, res: 5, ability: { id: 'arrow_guard',   name: 'Protection from Arrows' } },
-    shane:     { name: 'Shane',     class: 'archer',  role: 'Buffer',    hp: 18, atk: 6,  def: 3, spd: 9, res: 4, ability: { id: 'do_work',       name: 'Do Work!' } },
-    jasper:    { name: 'Jasper',    class: 'archer',  role: 'DPS',       hp: 16, atk: 11, def: 3, spd: 10, res: 3, ability: { id: 'undying',       name: 'Undying Project' } },
+    annie:     { name: 'Annie Khoo',       shortName: 'Annie',     title: 'Outreach Officer',         class: 'archer',  role: 'Tank',      hp: 24, atk: 7,  def: 8, spd: 4, res: 5, ability: { id: 'arrow_guard',   name: 'Protection from Arrows' } },
+    shane:     { name: 'Shane Soh',        shortName: 'Shane',     title: 'Manager',                  class: 'archer',  role: 'Buffer',    hp: 18, atk: 8,  def: 3, spd: 9, res: 4, ability: { id: 'do_work',       name: 'Do Work!' } },
+    jasper:    { name: 'Jasper Samuel',    shortName: 'Jasper',    title: 'Policy Officer',           class: 'archer',  role: 'DPS',       hp: 16, atk: 11, def: 3, spd: 10, res: 3, ability: { id: 'undying',       name: 'Undying Project' } },
     // --- Player: mages ---
-    karishma:  { name: 'Karishma',  class: 'mage',    role: 'Healer',    hp: 20, atk: 4,  def: 3, spd: 5, res: 10, ability: { id: 'tax_relief',    name: 'Tax Relief' } },
-    jade:      { name: 'Jade',      class: 'mage',    role: 'Buffer',    hp: 20, atk: 7,  def: 4, spd: 5, res: 7, ability: { id: 'future_ceo',    name: 'Future CEO' } },
-    bethany:   { name: 'Bethany',   class: 'mage',    role: 'DPS',       hp: 18, atk: 9,  def: 2, spd: 5, res: 8, ability: { id: 'mountain_climbing', name: 'Mountain Climbing' } },
+    karishma:  { name: 'Karishma Jayakumar', shortName: 'Karishma', title: 'Customer Service Officer', class: 'mage',    role: 'Healer',    hp: 20, atk: 4,  def: 3, spd: 5, res: 10, ability: { id: 'tax_relief',    name: 'Tax Relief' } },
+    jade:      { name: 'Jade Chen',        shortName: 'Jade',      title: 'Policy Officer',           class: 'mage',    role: 'Buffer',    hp: 20, atk: 7,  def: 4, spd: 5, res: 7, ability: { id: 'future_ceo',    name: 'Future CEO' } },
+    bethany:   { name: 'Bethany Su',       shortName: 'Bethany',   title: 'AI Lead',                  class: 'mage',    role: 'DPS',       hp: 18, atk: 9,  def: 2, spd: 5, res: 8, ability: { id: 'mountain_climbing', name: 'Mountain Climbing' } },
 
     // --- Enemies ---
     // The CEO: boss archer with range 2-3 and a strong attack aura.
@@ -107,19 +173,34 @@ const PLAYER_DEPLOY = [
 ];
 
 // Reference maxima for the selection screen bar chart.
-const STAT_MAX = { hp: 32, atk: 12, def: 11, spd: 10, res: 10 };
+// Stat bars are rendered as 5 tiers so different-magnitude stats (HP ~20 vs RES
+// ~6) can be compared at a glance. Tier = where this value sits in the roster's
+// range for that stat; top unit = 5 segments, weakest = 1.
+const STAT_MIN = {}, STAT_MAX = {};
+for (const stat of ['hp', 'atk', 'def', 'spd', 'res']) {
+    const vals = PLAYER_CHAR_KEYS.map(k => CHARACTERS[k][stat]);
+    STAT_MIN[stat] = Math.min(...vals);
+    STAT_MAX[stat] = Math.max(...vals);
+}
+const STAT_TIER_COUNT = 5;
+function statTier(stat, val) {
+    const min = STAT_MIN[stat], max = STAT_MAX[stat];
+    if (max === min) return STAT_TIER_COUNT;
+    const frac = (val - min) / (max - min);
+    return Math.max(1, Math.min(STAT_TIER_COUNT, Math.ceil(frac * STAT_TIER_COUNT)));
+}
 
 // Short flavour text for abilities — shown on the unit selection detail panel.
 const ABILITY_DESCRIPTIONS = {
     tax_mobile:        '+1 movement range.',
     hammer:            'Attacks ignore 50% of target DEF.',
-    tax_recovery:      'Heal 50% of damage dealt on attack.',
+    tax_recovery:      'Heal 75% of damage dealt on attack.',
     sleepless_panda:   'Regenerate 3 HP at the start of each turn.',
     blood_donation:    'Heal an adjacent ally for 10 HP.',
     arrow_guard:       'Halves incoming damage from archer attackers.',
-    do_work:           'Grant an ally +6 ATK for their next attack.',
+    do_work:           'Grant an ally +8 ATK for their next attack.',
     undying:           'Survives lethal damage once at 1 HP.',
-    tax_relief:        'Heal an adjacent ally for 10 HP.',
+    tax_relief:        'Heal an ally within 2 tiles for 10 HP.',
     future_ceo:        '+2 ATK aura to adjacent allies.',
     mountain_climbing: '+1 ATK at the start of each turn (max +3).',
     aura:              '+3 ATK aura to adjacent allies.',
@@ -129,7 +210,7 @@ const ABILITY_DESCRIPTIONS = {
 // Everything else is passive.
 const ACTIVE_ABILITY_IDS = new Set(['blood_donation', 'tax_relief', 'do_work']);
 
-function createInitialUnits(playerTeam) {
+function createInitialUnits(playerTeam, mapKey) {
     const team = (playerTeam && playerTeam.length === TEAM_SIZE)
         ? playerTeam
         : ['ryan', 'jade', 'annie', 'bethany'];
@@ -139,15 +220,10 @@ function createInitialUnits(playerTeam) {
         return makeUnit(key, 'player', pos.x, pos.y);
     });
 
-    // --- Enemy team (top row, row 0) ---
-    // CEO sits centre-top, flanked by Director and Minions. 5 enemies total.
-    units.push(
-        makeUnit('minion_arc', 'enemy', 1, 0),
-        makeUnit('director',   'enemy', 3, 0),
-        makeUnit('ceo',        'enemy', 4, 0),
-        makeUnit('minion_sol', 'enemy', 5, 0),
-        makeUnit('minion_mag', 'enemy', 6, 0),
-    );
+    const map = MAPS[mapKey] || MAPS[DEFAULT_MAP_KEY];
+    for (const e of map.enemies) {
+        units.push(makeUnit(e.key, 'enemy', e.x, e.y));
+    }
     return units;
 }
 
@@ -174,6 +250,8 @@ function makeUnit(charKey, team, x, y) {
         id: charKey + '_' + (++_unitIdCounter),
         charKey,
         name: c.name,
+        shortName: c.shortName || c.name,
+        title: c.title || '',
         type: c.class,     // kept as "type" for renderer / animation lookups
         team,
         sprite,
@@ -239,7 +317,7 @@ function getActiveAbility(u) {
     if (!u.ability) return null;
     const id = u.ability.id;
     if (id === 'blood_donation') return { id, name: u.ability.name, range: 1 };
-    if (id === 'tax_relief')     return { id, name: u.ability.name, range: 1 };
+    if (id === 'tax_relief')     return { id, name: u.ability.name, range: 2 };
     if (id === 'do_work')        return { id, name: u.ability.name, range: 2 };
     return null;
 }
@@ -278,6 +356,7 @@ const state = {
     inputLocked: false,
     selectedTeam: [],         // char keys chosen on the selection screen
     previewedChar: null,      // char key currently previewed on the selection screen
+    selectedMap: DEFAULT_MAP_KEY,
 };
 
 // ============================================================
@@ -522,9 +601,9 @@ async function doHit(attacker, defender, damage) {
     const dealt = hpBefore - defender.hp;
     spawnFloatingText('-' + dealt, defender.x, defender.y, '#ff6666');
 
-    // Richmond — Tax Recovery: heal 50% of damage dealt, minimum 1 when it procs.
+    // Richmond — Tax Recovery: heal 75% of damage dealt, minimum 1 when it procs.
     if (hasAbility(attacker, 'tax_recovery') && dealt > 0 && attacker.alive) {
-        const heal = Math.max(1, Math.floor(dealt * 0.5));
+        const heal = Math.max(1, Math.floor(dealt * 0.75));
         const hpAfter = Math.min(attacker.maxHp, attacker.hp + heal);
         const gained = hpAfter - attacker.hp;
         attacker.hp = hpAfter;
@@ -642,7 +721,10 @@ async function runEnemyPhase() {
         if (checkGameOver()) return;
     }
 
-    // Back to player phase
+    // Back to player phase. Advance the turn counter here so the display
+    // reads "Turn N" for the whole of round N (player + enemy), not only
+    // for the enemy phase.
+    state.turnNumber++;
     startPlayerPhase();
 }
 
@@ -711,11 +793,14 @@ function getAttackableEnemiesFromPos(unit, fx, fy) {
 // ============================================================
 
 async function startGame() {
-    state.units = createInitialUnits(state.selectedTeam);
+    const mapKey = MAPS[state.selectedMap] ? state.selectedMap : DEFAULT_MAP_KEY;
+    MAP = MAPS[mapKey].terrain;
+    state.units = createInitialUnits(state.selectedTeam, mapKey);
     state.turnNumber = 1;
     state.winner = null;
     state.phase = 'player';
     $('title-screen').classList.add('hidden');
+    $('map-select-screen').classList.add('hidden');
     $('select-screen').classList.add('hidden');
     $('gameover-screen').classList.add('hidden');
     await startPlayerPhase();
@@ -736,7 +821,7 @@ function setupSelectionScreen() {
         card.dataset.key = key;
         card.innerHTML =
             '<div class="select-sprite" style="background-image:url(\'' + SPRITES[sprite] + '\')"></div>' +
-            '<div class="select-name">' + c.name.toUpperCase() + '</div>' +
+            '<div class="select-name">' + (c.shortName || c.name).toUpperCase() + '</div>' +
             '<div class="select-role">' + (c.role || '') + '</div>' +
             '<div class="select-check">✓</div>';
         card.addEventListener('click', () => onSelectCardClick(key));
@@ -751,10 +836,60 @@ function showSelectionScreen() {
     state.selectedTeam = [];
     state.previewedChar = PLAYER_CHAR_KEYS[0];
     $('title-screen').classList.add('hidden');
+    $('map-select-screen').classList.add('hidden');
     $('gameover-screen').classList.add('hidden');
     $('select-screen').classList.remove('hidden');
     previewChar(state.previewedChar);
     refreshSelectUI();
+}
+
+function setupMapScreen() {
+    const grid = $('map-grid');
+    grid.innerHTML = '';
+    for (const key of MAP_ORDER) {
+        const m = MAPS[key];
+        const card = document.createElement('button');
+        card.className = 'map-card';
+        card.dataset.key = key;
+        card.innerHTML =
+            '<div class="mc-name">' + m.name.toUpperCase() + '</div>' +
+            '<div class="mc-bias">' + m.bias + '</div>';
+        card.addEventListener('click', () => onMapSelected(key));
+        grid.appendChild(card);
+    }
+}
+
+function showMapScreen() {
+    $('title-screen').classList.add('hidden');
+    $('select-screen').classList.add('hidden');
+    $('gameover-screen').classList.add('hidden');
+    $('map-select-screen').classList.remove('hidden');
+}
+
+function onMapSelected(key) {
+    state.selectedMap = key;
+    showSelectionScreen();
+}
+
+function openMenu() {
+    if (state.phase === 'gameover') return;
+    $('menu-overlay').classList.remove('hidden');
+}
+
+function closeMenu() {
+    $('menu-overlay').classList.add('hidden');
+}
+
+function onMenuRestart() {
+    closeMenu();
+    startGame();
+}
+
+function onMenuHome() {
+    closeMenu();
+    state.phase = 'title';
+    $('top-bar').classList.add('hidden');
+    showMapScreen();
 }
 
 function onSelectCardClick(key) {
@@ -769,11 +904,15 @@ function onSelectCardClick(key) {
     refreshSelectUI();
 }
 
-function statBar(label, val, max) {
-    const pct = Math.max(0, Math.min(100, (val / max) * 100));
+function statBar(label, val, stat) {
+    const tier = statTier(stat, val);
+    let segs = '';
+    for (let i = 1; i <= STAT_TIER_COUNT; i++) {
+        segs += '<span class="sb-seg' + (i <= tier ? ' filled' : '') + '"></span>';
+    }
     return '<div class="stat-bar">' +
         '<span class="sb-label">' + label + '</span>' +
-        '<span class="sb-track"><span class="sb-fill" style="width:' + pct + '%"></span></span>' +
+        '<span class="sb-track">' + segs + '</span>' +
         '<span class="sb-val">' + val + '</span>' +
         '</div>';
 }
@@ -808,12 +947,13 @@ function previewChar(key) {
             '</span>' +
             '<span class="sd-class">' + c.class.toUpperCase() + ' · RNG ' + rngStr + ' · MOV ' + move + '</span>' +
         '</div>' +
+        (c.title ? '<div class="sd-title">' + c.title + '</div>' : '') +
         '<div class="sd-bars">' +
-            statBar('HP',  c.hp,  STAT_MAX.hp) +
-            statBar('ATK', c.atk, STAT_MAX.atk) +
-            statBar('DEF', c.def, STAT_MAX.def) +
-            statBar('SPD', c.spd, STAT_MAX.spd) +
-            statBar('RES', c.res, STAT_MAX.res) +
+            statBar('HP',  c.hp,  'hp')  +
+            statBar('ATK', c.atk, 'atk') +
+            statBar('DEF', c.def, 'def') +
+            statBar('SPD', c.spd, 'spd') +
+            statBar('RES', c.res, 'res') +
         '</div>' +
         ability;
 }
@@ -850,7 +990,6 @@ async function startPlayerPhase() {
 }
 
 function endPlayerPhase() {
-    state.turnNumber++;
     for (const u of state.units) {
         if (u.team === 'enemy') {
             u.acted = false;
@@ -938,8 +1077,13 @@ function clearSelection() {
 function setupInput() {
     canvas.addEventListener('pointerdown', onCanvasPointerDown);
 
-    $('btn-start').addEventListener('click', showSelectionScreen);
-    $('btn-restart').addEventListener('click', showSelectionScreen);
+    $('btn-start').addEventListener('click', showMapScreen);
+    $('btn-restart').addEventListener('click', showMapScreen);
+    $('btn-back-to-map').addEventListener('click', showMapScreen);
+    $('btn-menu').addEventListener('click', openMenu);
+    $('btn-menu-resume').addEventListener('click', closeMenu);
+    $('btn-menu-restart').addEventListener('click', onMenuRestart);
+    $('btn-menu-home').addEventListener('click', onMenuHome);
     $('btn-wait').addEventListener('click', onWaitClicked);
     $('btn-cancel').addEventListener('click', onCancelClicked);
     $('btn-end-turn').addEventListener('click', onEndTurnClicked);
@@ -951,7 +1095,15 @@ function setupInput() {
         if (state.subPhase === 'abilityPreview') onAbilityCancelled();
         else onFightCancelled();
     });
+    $('btn-how-to-play').addEventListener('click', openGuide);
+    $('btn-guide-close').addEventListener('click', closeGuide);
+    $('guide-overlay').addEventListener('click', (e) => {
+        if (e.target.id === 'guide-overlay') closeGuide();
+    });
 }
+
+function openGuide()  { $('guide-overlay').classList.remove('hidden'); }
+function closeGuide() { $('guide-overlay').classList.add('hidden'); }
 
 function onCanvasPointerDown(e) {
     e.preventDefault();
@@ -977,6 +1129,10 @@ function handleTileTap(x, y) {
         } else if (unit) {
             // Tapping another unit: just show their info
             state.selectedUnit = unit;
+            updateUI();
+        } else if (state.selectedUnit) {
+            // Tap on empty tile clears the inspected unit.
+            state.selectedUnit = null;
             updateUI();
         }
         return;
@@ -1130,8 +1286,8 @@ async function applyActiveAbility(caster, target) {
         if (gained > 0) spawnFloatingText('+' + gained, target.x, target.y - 0.4, '#7effb0');
         target.hitFlash = 0.6;
     } else if (ab.id === 'do_work') {
-        target.atkBuff = 6;
-        spawnFloatingText('+6 ATK', target.x, target.y - 0.4, '#ffd36e');
+        target.atkBuff = 8;
+        spawnFloatingText('+8 ATK', target.x, target.y - 0.4, '#ffd36e');
         target.hitFlash = 0.6;
     }
 
@@ -1238,7 +1394,7 @@ function describeAbilityEffect(caster, target) {
     }
     if (ab.id === 'do_work') {
         if (target.atkBuff > 0) return { label: 'ALREADY BUFFED', detail: 'NO EFFECT' };
-        return { label: '+6 ATK', detail: 'NEXT ATTACK' };
+        return { label: '+8 ATK', detail: 'NEXT ATTACK' };
     }
     return { label: '', detail: '' };
 }
@@ -1251,13 +1407,13 @@ function showAbilityPreview(caster, target) {
         ab ? ab.name.toUpperCase() : 'ABILITY';
 
     const aEl = $('cp-attacker');
-    aEl.querySelector('.cp-name').textContent = caster.name.toUpperCase();
+    aEl.querySelector('.cp-name').textContent = (caster.shortName || caster.name).toUpperCase();
     aEl.querySelector('.cp-hp').textContent = 'HP ' + caster.hp + '/' + caster.maxHp;
     aEl.querySelector('.cp-dmg').textContent = 'CASTER';
     aEl.querySelector('.cp-hits').textContent = '';
 
     const dEl = $('cp-defender');
-    dEl.querySelector('.cp-name').textContent = target.name.toUpperCase();
+    dEl.querySelector('.cp-name').textContent = (target.shortName || target.name).toUpperCase();
     dEl.querySelector('.cp-hp').textContent = 'HP ' + target.hp + '/' + target.maxHp;
     dEl.querySelector('.cp-dmg').textContent = effect.label;
     dEl.querySelector('.cp-hits').textContent = effect.detail;
@@ -1294,12 +1450,20 @@ function checkPhaseEnd() {
 // UI MANAGEMENT
 // ============================================================
 
+let _lastChromeHidden = null;
 function updateUI() {
     // Top bar + info/action panels — hide on title / gameover screens
     const hideChrome = state.phase === 'title' || state.phase === 'gameover';
     $('top-bar').classList.toggle('hidden', hideChrome);
     $('info-panel').classList.toggle('hidden', hideChrome);
     $('action-panel').classList.toggle('hidden', hideChrome);
+    // Chrome visibility changed → canvas-wrap size just changed → re-fit the
+    // canvas so the map uses the available space. Only fires on transitions,
+    // not every UI update (resizeCanvas clears the canvas).
+    if (_lastChromeHidden !== hideChrome) {
+        _lastChromeHidden = hideChrome;
+        requestAnimationFrame(resizeCanvas);
+    }
     if (hideChrome) {
         // Skip the rest — nothing to update while those panels are hidden.
         return;
@@ -1327,7 +1491,9 @@ function updateUI() {
         }
         infoEl.innerHTML =
             '<div class="name-row">' +
-                '<span>' + u.name.toUpperCase() + '</span>' +
+                '<span>' + (u.shortName || u.name).toUpperCase() +
+                    (u.title ? ' <span class="unit-title">' + u.title + '</span>' : '') +
+                '</span>' +
                 '<span class="team ' + u.team + '">' + (u.team === 'player' ? 'ALLY' : 'FOE') + '</span>' +
             '</div>' +
             '<div class="hp-row">HP ' + u.hp + '/' + u.maxHp + '</div>' +
@@ -1376,13 +1542,13 @@ function showCombatPreview(attacker, defender, result) {
     const ctrLabel = result.canCounter ? (result.ctrDoubles ? 'x2 HITS' : '1 HIT') : 'NO COUNTER';
 
     const aEl = $('cp-attacker');
-    aEl.querySelector('.cp-name').textContent = attacker.name.toUpperCase();
+    aEl.querySelector('.cp-name').textContent = (attacker.shortName || attacker.name).toUpperCase();
     aEl.querySelector('.cp-hp').textContent = 'HP ' + attacker.hp + '/' + attacker.maxHp;
     aEl.querySelector('.cp-dmg').textContent = 'DMG ' + result.atkDmg;
     aEl.querySelector('.cp-hits').textContent = atkHits;
 
     const dEl = $('cp-defender');
-    dEl.querySelector('.cp-name').textContent = defender.name.toUpperCase();
+    dEl.querySelector('.cp-name').textContent = (defender.shortName || defender.name).toUpperCase();
     dEl.querySelector('.cp-hp').textContent = 'HP ' + defender.hp + '/' + defender.maxHp;
     dEl.querySelector('.cp-dmg').textContent = 'DMG ' + (result.canCounter ? result.ctrDmg : '-');
     dEl.querySelector('.cp-hits').textContent = ctrLabel;
@@ -1663,6 +1829,7 @@ async function init() {
     setupCanvas();
     setupInput();
     setupSelectionScreen();
+    setupMapScreen();
     buildTerrainTextures();
     updateUI();
 

@@ -16,6 +16,16 @@
         <div id="top-bar" class="hidden">
             <span id="turn-info">Turn 1</span>
             <span id="phase-label">Player Phase</span>
+            <button id="btn-menu" aria-label="Menu">☰</button>
+        </div>
+
+        <div id="menu-overlay" class="hidden">
+            <div class="menu-box">
+                <div class="menu-title">PAUSED</div>
+                <button id="btn-menu-resume" class="menu-btn">RESUME</button>
+                <button id="btn-menu-restart" class="menu-btn">RESTART MAP</button>
+                <button id="btn-menu-home" class="menu-btn">HOME</button>
+            </div>
         </div>
 
         <div id="canvas-wrap">
@@ -32,6 +42,71 @@
             </div>
         </div>
 
+        <div id="map-select-screen" class="hidden">
+            <div class="select-header">
+                <h2>CHOOSE YOUR MAP</h2>
+                <p>Each map has different terrain and enemies.</p>
+            </div>
+            <div id="map-grid"></div>
+            <button id="btn-how-to-play" class="how-to-play-btn">HOW TO PLAY</button>
+        </div>
+
+        <div id="guide-overlay" class="hidden">
+            <div class="guide-box">
+                <div class="guide-header">
+                    <span>HOW TO PLAY</span>
+                    <button id="btn-guide-close" aria-label="Close">✕</button>
+                </div>
+                <div class="guide-body">
+                    <h3>GOAL</h3>
+                    <p>Defeat all enemies on the map. You lose if all your units fall.</p>
+
+                    <h3>TURN FLOW</h3>
+                    <p>Each round has a <b>Player Phase</b> then an <b>Enemy Phase</b>. On your phase, tap an ally to act. A unit that has acted is greyed out until next round.</p>
+
+                    <h3>ACTING WITH A UNIT</h3>
+                    <ol>
+                        <li><b>Move</b> — blue tiles show where you can go. Tap one to move there (or stay put).</li>
+                        <li><b>Act</b> — attack a red tile, use an ability on a green tile, or tap <b>Wait</b> to end the turn.</li>
+                    </ol>
+
+                    <h3>COMBAT</h3>
+                    <p>When you pick a target, a <b>Combat Forecast</b> shows damage and hits for both sides. Defenders counter-attack if in range. Fighters with much higher <b>SPD</b> strike twice.</p>
+
+                    <h3>STATS</h3>
+                    <ul class="stat-list">
+                        <li><b class="s-hp">HP</b> Health. At 0 the unit is defeated.</li>
+                        <li><b class="s-atk">ATK</b> Attack power. Raw damage before defense.</li>
+                        <li><b class="s-def">DEF</b> Reduces physical damage (soldiers, archers).</li>
+                        <li><b class="s-res">RES</b> Reduces magic damage (mages).</li>
+                        <li><b class="s-spd">SPD</b> If your SPD beats your opponent's by 4+, you strike twice.</li>
+                        <li><b>RNG</b> Attack range in tiles. Archers strike at 2, mages 1–2, soldiers 1.</li>
+                        <li><b>MOV</b> Tiles movable per turn (normally 2; blocked by trees/water).</li>
+                    </ul>
+
+                    <h3>CLASSES</h3>
+                    <ul>
+                        <li><b>Soldier</b> — melee, deals physical damage, blocked by DEF.</li>
+                        <li><b>Archer</b> — ranged 2 tiles, physical damage, blocked by DEF.</li>
+                        <li><b>Mage</b> — range 1–2, magic damage, blocked by RES.</li>
+                    </ul>
+
+                    <h3>TERRAIN</h3>
+                    <p><b>Trees</b> and <b>water</b> block movement — no one can step on them. Ranged attacks still fly over both.</p>
+
+                    <h3>ABILITIES</h3>
+                    <p>Each hero has a unique <b>PASSIVE</b> (always on) or <b>ACTIVE</b> (once per turn, in place of attacking) skill. Check the squad-select screen for full descriptions.</p>
+
+                    <h3>TIPS</h3>
+                    <ul>
+                        <li>Lead with tanks (high DEF/HP). Keep squishy DPS and healers behind.</li>
+                        <li>Use terrain to funnel enemies — they can't path through trees or water.</li>
+                        <li>Check the forecast before every attack — a bad trade can snowball.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div id="select-screen" class="hidden">
             <div class="select-header">
                 <h2>CHOOSE YOUR SQUAD</h2>
@@ -40,6 +115,7 @@
             <div id="select-grid"></div>
             <div id="select-detail"></div>
             <div class="select-footer">
+                <button id="btn-back-to-map" class="back-btn">BACK</button>
                 <span id="select-count">0/4</span>
                 <button id="btn-start-battle" disabled>START BATTLE</button>
             </div>
