@@ -6,8 +6,8 @@
 }
 
 :root {
-    /* Scales text size to the device. 1rem ≈ 10px on phones, up to 16px on larger screens. */
-    font-size: clamp(10px, 1.8vmin, 16px);
+    /* Scales text size to the device. 1rem ≈ 12px on phones, up to 18px on larger screens. */
+    font-size: clamp(12px, 2.1vmin, 18px);
 }
 
 html, body {
@@ -219,6 +219,16 @@ html, body {
     color: #e94560;
 }
 
+#gameover-flavor {
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    letter-spacing: 1px;
+    text-align: center;
+    max-width: 80%;
+    line-height: 1.6;
+    margin-top: -6px;
+}
+
 #btn-start, #btn-restart {
     margin-top: 24px;
     padding: 14px 20px;
@@ -375,6 +385,17 @@ html, body {
 }
 
 #btn-end-turn {
+    background: #3a3a5e;
+    border-color: #9a9ac7;
+}
+
+#btn-deploy-start {
+    background: #8c2d3a;
+    border-color: #e94560;
+    letter-spacing: 2px;
+}
+
+#btn-deploy-back {
     background: #3a3a5e;
     border-color: #9a9ac7;
 }

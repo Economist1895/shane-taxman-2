@@ -38,6 +38,7 @@
             </div>
             <div id="gameover-screen" class="hidden">
                 <h2 id="gameover-text">VICTORY</h2>
+                <p id="gameover-flavor"></p>
                 <button id="btn-restart">PLAY AGAIN</button>
             </div>
         </div>
@@ -61,6 +62,9 @@
                     <h3>GOAL</h3>
                     <p>Defeat all enemies on the map. You lose if all your units fall.</p>
 
+                    <h3>DEPLOY</h3>
+                    <p>Before every battle you see the map with your squad lined up along the bottom. Tap an ally to pick them up, then tap another to swap their tiles. Hit <b>Start Battle</b> when you're ready.</p>
+
                     <h3>TURN FLOW</h3>
                     <p>Each round has a <b>Player Phase</b> then an <b>Enemy Phase</b>. On your phase, tap an ally to act. A unit that has acted is greyed out until next round.</p>
 
@@ -81,7 +85,7 @@
                         <li><b class="s-res">RES</b> Reduces magic damage (mages).</li>
                         <li><b class="s-spd">SPD</b> If your SPD beats your opponent's by 4+, you strike twice.</li>
                         <li><b>RNG</b> Attack range in tiles. Archers strike at 2, mages 1–2, soldiers 1.</li>
-                        <li><b>MOV</b> Tiles movable per turn (normally 2; blocked by trees/water).</li>
+                        <li><b>MOV</b> Tiles movable per turn (normally 2, 4 for Ryan; blocked by trees/water).</li>
                     </ul>
 
                     <h3>CLASSES</h3>
@@ -117,9 +121,10 @@
             <div class="select-footer">
                 <button id="btn-back-to-map" class="back-btn">BACK</button>
                 <span id="select-count">0/4</span>
-                <button id="btn-start-battle" disabled>START BATTLE</button>
+                <button id="btn-start-battle" disabled>NEXT</button>
             </div>
         </div>
+
 
         <div id="info-panel">
             <div id="unit-info" class="empty">
@@ -131,6 +136,8 @@
             <button id="btn-wait" class="action-btn hidden">Wait</button>
             <button id="btn-cancel" class="action-btn hidden">Cancel</button>
             <button id="btn-end-turn" class="action-btn hidden">End Turn</button>
+            <button id="btn-deploy-back" class="action-btn hidden">Back</button>
+            <button id="btn-deploy-start" class="action-btn hidden">Start Battle</button>
         </div>
 
         <div id="combat-preview" class="hidden">

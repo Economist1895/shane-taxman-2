@@ -117,17 +117,17 @@ const CLASS_DEFAULTS = {
 // Ability effects are not yet implemented — this table is the source of truth for stats/names.
 const CHARACTERS = {
     // --- Player: soldiers ---
-    ryan:      { name: 'Ryan Li',          shortName: 'Ryan',      title: 'Investigator',             class: 'soldier', role: 'Scout',     hp: 20, atk: 7,  def: 5, spd: 9, res: 3, ability: { id: 'tax_mobile',    name: 'Tax Mobile of Justice' } },
+    ryan:      { name: 'Ryan Li',          shortName: 'Ryan',      title: 'Investigator',             class: 'soldier', role: 'Scout',     hp: 22, atk: 7,  def: 5, spd: 9, res: 3, ability: { id: 'tax_mobile',    name: 'Tax Mobile of Justice' } },
     sylvester: { name: 'Sylvester Sim',    shortName: 'Sylvester', title: 'Legal Associate',          class: 'soldier', role: 'DPS',       hp: 22, atk: 12, def: 6, spd: 4, res: 2, ability: { id: 'hammer',        name: 'Hammer of Justice' } },
     richmond:  { name: 'Richmond Yeo',     shortName: 'Richmond',  title: 'Auditor',                  class: 'soldier', role: 'Lifesteal', hp: 24, atk: 10, def: 6, spd: 5, res: 2, ability: { id: 'tax_recovery',  name: 'Tax Recovery' } },
-    shaun:     { name: 'Shaun Tan',        shortName: 'Shaun',     title: 'Tax Specialist',           class: 'soldier', role: 'Tank',      hp: 28, atk: 7,  def: 10, spd: 2, res: 4, ability: { id: 'sleepless_panda', name: 'Sleepless Panda' } },
-    jiawei:    { name: 'Jiawei Tian',      shortName: 'Jiawei',    title: 'Software Developer',       class: 'soldier', role: 'Medic',     hp: 26, atk: 6,  def: 7, spd: 4, res: 5, ability: { id: 'blood_donation', name: 'Blood Donation' } },
+    shaun:     { name: 'Shaun Tan',        shortName: 'Shaun',     title: 'Tax Specialist',           class: 'soldier', role: 'Tank',      hp: 28, atk: 8,  def: 10, spd: 2, res: 4, ability: { id: 'sleepless_panda', name: 'Sleepless Panda' } },
+    jiawei:    { name: 'Jiawei Tian',      shortName: 'Jiawei',    title: 'Software Developer',       class: 'soldier', role: 'Medic',     hp: 26, atk: 8,  def: 7, spd: 4, res: 5, ability: { id: 'blood_donation', name: 'Blood Donation' } },
     // --- Player: archers ---
-    annie:     { name: 'Annie Khoo',       shortName: 'Annie',     title: 'Outreach Officer',         class: 'archer',  role: 'Tank',      hp: 24, atk: 7,  def: 8, spd: 4, res: 5, ability: { id: 'arrow_guard',   name: 'Protection from Arrows' } },
-    shane:     { name: 'Shane Soh',        shortName: 'Shane',     title: 'Manager',                  class: 'archer',  role: 'Buffer',    hp: 18, atk: 8,  def: 3, spd: 9, res: 4, ability: { id: 'do_work',       name: 'Do Work!' } },
+    annie:     { name: 'Annie Khoo',       shortName: 'Annie',     title: 'Outreach Officer',         class: 'archer',  role: 'Tank',      hp: 24, atk: 9,  def: 8, spd: 4, res: 5, ability: { id: 'arrow_guard',   name: 'Protection from Arrows' } },
+    shane:     { name: 'Shane Soh',        shortName: 'Shane',     title: 'Manager',                  class: 'archer',  role: 'Buffer',    hp: 20, atk: 8,  def: 3, spd: 9, res: 4, ability: { id: 'do_work',       name: 'Do Work!' } },
     jasper:    { name: 'Jasper Samuel',    shortName: 'Jasper',    title: 'Policy Officer',           class: 'archer',  role: 'DPS',       hp: 16, atk: 11, def: 3, spd: 10, res: 3, ability: { id: 'undying',       name: 'Undying Project' } },
     // --- Player: mages ---
-    karishma:  { name: 'Karishma Jayakumar', shortName: 'Karishma', title: 'Customer Service Officer', class: 'mage',    role: 'Healer',    hp: 20, atk: 4,  def: 3, spd: 5, res: 10, ability: { id: 'tax_relief',    name: 'Tax Relief' } },
+    karishma:  { name: 'Karishma Jayakumar', shortName: 'Karishma', title: 'Customer Service Officer', class: 'mage',    role: 'Healer',    hp: 20, atk: 7,  def: 3, spd: 5, res: 10, ability: { id: 'tax_relief',    name: 'Tax Relief' } },
     jade:      { name: 'Jade Chen',        shortName: 'Jade',      title: 'Policy Officer',           class: 'mage',    role: 'Buffer',    hp: 20, atk: 7,  def: 4, spd: 5, res: 7, ability: { id: 'future_ceo',    name: 'Future CEO' } },
     bethany:   { name: 'Bethany Su',       shortName: 'Bethany',   title: 'AI Lead',                  class: 'mage',    role: 'DPS',       hp: 18, atk: 9,  def: 2, spd: 5, res: 8, ability: { id: 'mountain_climbing', name: 'Mountain Climbing' } },
 
@@ -192,16 +192,16 @@ function statTier(stat, val) {
 
 // Short flavour text for abilities — shown on the unit selection detail panel.
 const ABILITY_DESCRIPTIONS = {
-    tax_mobile:        '+1 movement range.',
+    tax_mobile:        '+2 movement range.',
     hammer:            'Attacks ignore 50% of target DEF.',
-    tax_recovery:      'Heal 75% of damage dealt on attack.',
-    sleepless_panda:   'Regenerate 3 HP at the start of each turn.',
-    blood_donation:    'Heal an adjacent ally for 10 HP.',
+    tax_recovery:      'Heal 100% of damage dealt on attack.',
+    sleepless_panda:   'Regenerate 4 HP at the start of each turn.',
+    blood_donation:    'Heal an adjacent ally for 14 HP.',
     arrow_guard:       'Halves incoming damage from archer attackers.',
-    do_work:           'Grant an ally +8 ATK for their next attack.',
+    do_work:           'Grant an ally +6 ATK for their next attack.',
     undying:           'Survives lethal damage once at 1 HP.',
-    tax_relief:        'Heal an ally within 2 tiles for 10 HP.',
-    future_ceo:        '+2 ATK aura to adjacent allies.',
+    tax_relief:        'Heal an ally within 2 tiles for 12 HP.',
+    future_ceo:        '+3 ATK aura to adjacent allies.',
     mountain_climbing: '+1 ATK at the start of each turn (max +3).',
     aura:              '+3 ATK aura to adjacent allies.',
 };
@@ -214,8 +214,11 @@ function createInitialUnits(playerTeam, mapKey) {
     const team = (playerTeam && playerTeam.length === TEAM_SIZE)
         ? playerTeam
         : ['ryan', 'jade', 'annie', 'bethany'];
+    const order = (state.deployOrder && state.deployOrder.length === TEAM_SIZE)
+        ? state.deployOrder
+        : team;
 
-    const units = team.map((key, i) => {
+    const units = order.map((key, i) => {
         const pos = PLAYER_DEPLOY[i];
         return makeUnit(key, 'player', pos.x, pos.y);
     });
@@ -242,9 +245,9 @@ function makeUnit(charKey, team, x, y) {
     const sprite = SPRITE_BY_CLASS_TEAM[c.class][team];
     const abilityId = c.ability ? c.ability.id : null;
 
-    // Ryan's Tax Mobile of Justice: +1 movement is baked in at creation time.
+    // Ryan's Tax Mobile of Justice: +2 movement is baked in at creation time.
     const baseMove = c.movement ?? cls.movement;
-    const movement = abilityId === 'tax_mobile' ? baseMove + 1 : baseMove;
+    const movement = abilityId === 'tax_mobile' ? baseMove + 2 : baseMove;
 
     return {
         id: charKey + '_' + (++_unitIdCounter),
@@ -299,14 +302,14 @@ function alliesWithin(team, fx, fy, maxDist, excludeId) {
     return out;
 }
 
-// ATK aura if an ally with Future CEO (Jade, +2) or Aura (The CEO, +3) sits
+// ATK aura if an ally with Future CEO (Jade, +3) or Aura (The CEO, +3) sits
 // orthogonally adjacent. Does not stack — take the best single source.
 function getAuraAtkBonus(u) {
     const allies = alliesWithin(u.team, u.x, u.y, 1, u.id);
     let best = 0;
     for (const a of allies) {
         if (hasAbility(a, 'aura')) best = Math.max(best, 3);
-        else if (hasAbility(a, 'future_ceo')) best = Math.max(best, 2);
+        else if (hasAbility(a, 'future_ceo')) best = Math.max(best, 3);
     }
     return best;
 }
@@ -339,8 +342,8 @@ function getEffectiveAtk(u) {
 // ============================================================
 
 const state = {
-    phase: 'title',           // 'title', 'player', 'enemy', 'gameover'
-    subPhase: 'selectUnit',   // 'selectUnit', 'selectMove', 'selectAction', 'selectTarget', 'combatPreview', 'abilityPreview', 'animating'
+    phase: 'title',           // 'title', 'deploy', 'player', 'enemy', 'gameover'
+    subPhase: 'selectUnit',   // 'selectUnit', 'selectMove', 'selectAction', 'selectTarget', 'combatPreview', 'abilityPreview', 'animating', 'deploySwap'
     units: [],
     selectedUnit: null,
     selectedOrigin: null,     // {x,y} for cancel-undo
@@ -350,13 +353,14 @@ const state = {
     pendingAttackTarget: null,
     pendingCombatResult: null,
     pendingAbilityTarget: null,
-    floatingTexts: [],        // {text, x, y, age, maxAge, color}
+    floatingTexts: [],        // {text, gx, gy, age, maxAge, color}
     turnNumber: 1,
     winner: null,
     inputLocked: false,
     selectedTeam: [],         // char keys chosen on the selection screen
     previewedChar: null,      // char key currently previewed on the selection screen
     selectedMap: DEFAULT_MAP_KEY,
+    deployOrder: [],          // char keys in deploy-slot order (matches PLAYER_DEPLOY)
 };
 
 // ============================================================
@@ -601,9 +605,9 @@ async function doHit(attacker, defender, damage) {
     const dealt = hpBefore - defender.hp;
     spawnFloatingText('-' + dealt, defender.x, defender.y, '#ff6666');
 
-    // Richmond — Tax Recovery: heal 75% of damage dealt, minimum 1 when it procs.
+    // Richmond — Tax Recovery: heal 100% of damage dealt.
     if (hasAbility(attacker, 'tax_recovery') && dealt > 0 && attacker.alive) {
-        const heal = Math.max(1, Math.floor(dealt * 0.75));
+        const heal = dealt;
         const hpAfter = Math.min(attacker.maxHp, attacker.hp + heal);
         const gained = hpAfter - attacker.hp;
         attacker.hp = hpAfter;
@@ -799,10 +803,15 @@ async function startGame() {
     state.turnNumber = 1;
     state.winner = null;
     state.phase = 'player';
+    state.floatingTexts = [];
+    state.pendingAbilityTarget = null;
+    state.inputLocked = false;
+    clearSelection();
     $('title-screen').classList.add('hidden');
     $('map-select-screen').classList.add('hidden');
     $('select-screen').classList.add('hidden');
     $('gameover-screen').classList.add('hidden');
+    $('combat-preview').classList.add('hidden');
     await startPlayerPhase();
 }
 
@@ -828,7 +837,7 @@ function setupSelectionScreen() {
         grid.appendChild(card);
     }
     $('btn-start-battle').addEventListener('click', () => {
-        if (state.selectedTeam.length === TEAM_SIZE) startGame();
+        if (state.selectedTeam.length === TEAM_SIZE) showDeployScreen();
     });
 }
 
@@ -841,6 +850,99 @@ function showSelectionScreen() {
     $('select-screen').classList.remove('hidden');
     previewChar(state.previewedChar);
     refreshSelectUI();
+}
+
+function setupDeployScreen() {
+    $('btn-deploy-start').addEventListener('click', beginBattleFromDeploy);
+    $('btn-deploy-back').addEventListener('click', backFromDeploy);
+}
+
+// Places units on the battlefield for preview and lets the player tap two of
+// their own units to swap positions before committing to battle.
+function showDeployScreen() {
+    const mapKey = MAPS[state.selectedMap] ? state.selectedMap : DEFAULT_MAP_KEY;
+    MAP = MAPS[mapKey].terrain;
+    state.deployOrder = state.selectedTeam.slice();
+    state.units = createInitialUnits(state.selectedTeam, mapKey);
+    state.turnNumber = 1;
+    state.winner = null;
+    state.phase = 'deploy';
+    state.subPhase = 'deploySwap';
+    state.selectedUnit = null;
+    state.moveTiles = [];
+    state.attackTiles = [];
+    state.abilityTiles = [];
+    $('title-screen').classList.add('hidden');
+    $('map-select-screen').classList.add('hidden');
+    $('select-screen').classList.add('hidden');
+    $('gameover-screen').classList.add('hidden');
+    refreshDeployHighlights();
+    updateUI();
+}
+
+// Green tiles on every swappable ally (or on just the 3 other allies when one
+// is selected) — makes it obvious which tiles accept a tap during deploy.
+function refreshDeployHighlights() {
+    const targets = state.units.filter(u =>
+        u.team === 'player' && u.alive && u !== state.selectedUnit
+    );
+    state.abilityTiles = targets.map(u => ({ x: u.x, y: u.y }));
+}
+
+function handleDeployTap(x, y) {
+    const unit = getUnitAt(x, y);
+    // Only player units are swappable; everything else clears the selection.
+    if (!unit || unit.team !== 'player') {
+        state.selectedUnit = null;
+        refreshDeployHighlights();
+        updateUI();
+        return;
+    }
+    if (state.selectedUnit === unit) {
+        state.selectedUnit = null;
+    } else if (state.selectedUnit) {
+        const a = state.selectedUnit, b = unit;
+        const ax = a.x, ay = a.y;
+        a.x = b.x; a.y = b.y;
+        b.x = ax; b.y = ay;
+        a.renderX = a.x; a.renderY = a.y;
+        b.renderX = b.x; b.renderY = b.y;
+        state.selectedUnit = null;
+    } else {
+        state.selectedUnit = unit;
+    }
+    refreshDeployHighlights();
+    updateUI();
+}
+
+async function beginBattleFromDeploy() {
+    // deployOrder reflects the current slot order; rebuild from actual unit
+    // positions so any mid-deploy swaps are honoured.
+    const deployed = [];
+    for (const slot of PLAYER_DEPLOY) {
+        const u = getUnitAt(slot.x, slot.y);
+        if (u && u.team === 'player') deployed.push(u.charKey);
+    }
+    if (deployed.length === TEAM_SIZE) state.deployOrder = deployed;
+
+    state.phase = 'player';
+    state.subPhase = 'selectUnit';
+    state.selectedUnit = null;
+    state.moveTiles = [];
+    state.attackTiles = [];
+    state.abilityTiles = [];
+    await startPlayerPhase();
+}
+
+function backFromDeploy() {
+    state.phase = 'title';
+    state.units = [];
+    state.selectedUnit = null;
+    state.moveTiles = [];
+    state.attackTiles = [];
+    state.abilityTiles = [];
+    $('select-screen').classList.remove('hidden');
+    updateUI();
 }
 
 function setupMapScreen() {
@@ -1005,7 +1107,7 @@ function applyTurnStartAbilities(u) {
     if (!u.alive) return;
     if (hasAbility(u, 'sleepless_panda')) {
         const before = u.hp;
-        u.hp = Math.min(u.maxHp, u.hp + 3);
+        u.hp = Math.min(u.maxHp, u.hp + 4);
         if (u.hp > before) spawnFloatingText('+' + (u.hp - before), u.x, u.y - 0.4, '#7effb0');
     }
     if (hasAbility(u, 'mountain_climbing')) {
@@ -1041,6 +1143,13 @@ function showGameOver(text, defeat) {
     el.classList.remove('hidden');
     el.classList.toggle('defeat', defeat);
     $('gameover-text').textContent = text;
+    $('gameover-flavor').textContent = defeat
+        ? 'Disappointing — PG 1 for you.'
+        : 'Amazing — PG 5 for you.';
+    clearSelection();
+    state.pendingAbilityTarget = null;
+    $('combat-preview').classList.add('hidden');
+    updateUI();
 }
 
 function showBanner(text) {
@@ -1108,7 +1217,7 @@ function closeGuide() { $('guide-overlay').classList.add('hidden'); }
 function onCanvasPointerDown(e) {
     e.preventDefault();
     if (state.inputLocked) return;
-    if (state.phase !== 'player') return;
+    if (state.phase !== 'player' && state.phase !== 'deploy') return;
 
     const rect = canvas.getBoundingClientRect();
     const px = e.clientX - rect.left;
@@ -1117,6 +1226,10 @@ function onCanvasPointerDown(e) {
     const row = Math.floor(py / (rect.height / ROWS));
 
     if (!inBounds(col, row)) return;
+    if (state.phase === 'deploy') {
+        handleDeployTap(col, row);
+        return;
+    }
     handleTileTap(col, row);
 }
 
@@ -1272,22 +1385,22 @@ async function applyActiveAbility(caster, target) {
     caster.attackFrame = 0;
 
     if (ab.id === 'blood_donation') {
-        const heal = 10;
+        const heal = 14;
         const before = target.hp;
         target.hp = Math.min(target.maxHp, target.hp + heal);
         const gained = target.hp - before;
         if (gained > 0) spawnFloatingText('+' + gained, target.x, target.y - 0.4, '#7effb0');
         target.hitFlash = 0.6;
     } else if (ab.id === 'tax_relief') {
-        const heal = 10;
+        const heal = 12;
         const before = target.hp;
         target.hp = Math.min(target.maxHp, target.hp + heal);
         const gained = target.hp - before;
         if (gained > 0) spawnFloatingText('+' + gained, target.x, target.y - 0.4, '#7effb0');
         target.hitFlash = 0.6;
     } else if (ab.id === 'do_work') {
-        target.atkBuff = 8;
-        spawnFloatingText('+8 ATK', target.x, target.y - 0.4, '#ffd36e');
+        target.atkBuff = 6;
+        spawnFloatingText('+6 ATK', target.x, target.y - 0.4, '#ffd36e');
         target.hitFlash = 0.6;
     }
 
@@ -1386,7 +1499,7 @@ function describeAbilityEffect(caster, target) {
     const ab = getActiveAbility(caster);
     if (!ab) return { label: '', detail: '' };
     if (ab.id === 'blood_donation' || ab.id === 'tax_relief') {
-        const heal = 10;
+        const heal = ab.id === 'blood_donation' ? 14 : 12;
         const after = Math.min(target.maxHp, target.hp + heal);
         const gained = after - target.hp;
         if (gained === 0) return { label: 'FULL HP', detail: 'NO EFFECT' };
@@ -1394,7 +1507,7 @@ function describeAbilityEffect(caster, target) {
     }
     if (ab.id === 'do_work') {
         if (target.atkBuff > 0) return { label: 'ALREADY BUFFED', detail: 'NO EFFECT' };
-        return { label: '+8 ATK', detail: 'NEXT ATTACK' };
+        return { label: '+6 ATK', detail: 'NEXT ATTACK' };
     }
     return { label: '', detail: '' };
 }
@@ -1468,10 +1581,13 @@ function updateUI() {
         // Skip the rest — nothing to update while those panels are hidden.
         return;
     }
-    $('turn-info').textContent = 'Turn ' + state.turnNumber;
+    $('turn-info').textContent = state.phase === 'deploy' ? 'Deploy' : 'Turn ' + state.turnNumber;
     $('phase-label').textContent =
         state.phase === 'player' ? 'Player Phase' :
-        state.phase === 'enemy' ? 'Enemy Phase' : '';
+        state.phase === 'enemy' ? 'Enemy Phase' :
+        state.phase === 'deploy' ? 'Position Squad' : '';
+    // Menu would offer Restart (skips deploy) / Home, both confusing mid-deploy.
+    toggle($('btn-menu'), state.phase !== 'deploy');
 
     // Unit info
     const infoEl = $('unit-info');
@@ -1507,7 +1623,10 @@ function updateUI() {
             abilityBlock;
     } else {
         infoEl.classList.add('empty');
-        infoEl.innerHTML = '<span class="hint">Select a unit</span>';
+        const hint = state.phase === 'deploy'
+            ? 'Tap an ally to pick them up, then tap another to swap'
+            : 'Select a unit';
+        infoEl.innerHTML = '<span class="hint">' + hint + '</span>';
     }
 
     // Action buttons visibility
@@ -1517,10 +1636,13 @@ function updateUI() {
         state.subPhase === 'selectAction' ||
         state.subPhase === 'selectTarget';
     const showEndTurn = state.phase === 'player' && state.subPhase === 'selectUnit';
+    const showDeployBtns = state.phase === 'deploy';
 
     toggle($('btn-wait'), showWait);
     toggle($('btn-cancel'), showCancel);
     toggle($('btn-end-turn'), showEndTurn);
+    toggle($('btn-deploy-back'), showDeployBtns);
+    toggle($('btn-deploy-start'), showDeployBtns);
 }
 
 function toggle(el, show) {
@@ -1829,6 +1951,7 @@ async function init() {
     setupCanvas();
     setupInput();
     setupSelectionScreen();
+    setupDeployScreen();
     setupMapScreen();
     buildTerrainTextures();
     updateUI();
