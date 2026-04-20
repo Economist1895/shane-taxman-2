@@ -55,7 +55,7 @@ html, body {
 .map-card .mc-desc {
     font-family: 'VT323', 'Courier New', monospace;
     letter-spacing: 0;
-    font-size: 1.05rem;
+    font-size: 1.3rem;
     line-height: 1.35;
 }
 
@@ -434,7 +434,7 @@ html, body {
     justify-content: space-between;
     align-items: center;
     color: var(--gold);
-    font-size: 1rem;
+    font-size: 0.85rem;
     text-shadow: 1px 1px 0 var(--bg-void);
 }
 
@@ -843,7 +843,7 @@ html, body {
 }
 
 .sd-name {
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: var(--gold);
     letter-spacing: 1px;
     text-shadow: 1px 1px 0 var(--bg-void);
