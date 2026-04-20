@@ -65,16 +65,30 @@ Trees and water block **movement** — no one can step on them — but ranged at
 .
 ├── index.html      # markup + UI layout (title, map select, squad select, HUD, modals)
 ├── styles.css      # all styling (pixel UI, responsive layout)
-├── js/
-│   └── game.js     # game logic, combat, AI, rendering
+├── js/             # classic scripts, loaded in dependency order from index.html
+│   ├── config.js       # static data: grid, characters, maps, abilities
+│   ├── state.js        # shared state singleton + canvas/ctx/tileSize/MAP refs
+│   ├── utils.js        # grid math, $, delay, animate
+│   ├── particles.js    # particles, floating text, screen shake
+│   ├── units.js        # unit construction, abilities, effective stats
+│   ├── pathing.js      # movement BFS, attack-range queries, move animation
+│   ├── render.js       # canvas setup, terrain textures, draw layers
+│   ├── combat.js       # damage math, hit resolution, combat sequence
+│   ├── ai.js           # enemy turn decisions
+│   ├── ui.js           # DOM screens, overlays, panels, forecasts
+│   ├── flow.js         # phase transitions, turn bookkeeping, game-over
+│   ├── input.js        # pointer + button handlers, action flow
+│   └── main.js         # bootstrap + render loop
 └── sprites/        # PNG sprite sheets (soldier / archer / mage, tree)
 ```
 
 ## Running locally
 
-No build step. Serve the folder with any static file server, for example:
+No build step and no dependencies — just open `index.html` directly in a browser, or serve the folder with any static file server:
 
 ```sh
 python3 -m http.server 8000
 # then open http://localhost:8000
 ```
+
+The scripts are plain classic `<script>` tags (not ES modules), so `file://` works too.
