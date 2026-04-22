@@ -62,6 +62,7 @@ const MAPS = {
         ],
         enemies: [
             { key: 'minion_arc', x: 1, y: 0 },
+            { key: 'minion_mag', x: 2, y: 0 },
             { key: 'director',   x: 3, y: 0 },
             { key: 'ceo',        x: 4, y: 0 },
             { key: 'minion_mag', x: 5, y: 0 },
@@ -83,6 +84,7 @@ const MAPS = {
         ],
         enemies: [
             { key: 'minion_arc', x: 1, y: 0 },
+            { key: 'minion_mag', x: 3, y: 0 },
             { key: 'ceo',        x: 4, y: 0 },
             { key: 'director',   x: 5, y: 0 },
             { key: 'minion_sol', x: 2, y: 2 }, // camping left bridge
