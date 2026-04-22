@@ -104,7 +104,7 @@ const CLASS_DEFAULTS = {
 // Character roster. Stats + (optional) ability; class brings range + damage type.
 const CHARACTERS = {
     // --- Player: soldiers ---
-    ryan:      { name: 'Ryan Li',          shortName: 'Ryan',      title: 'Investigator',             class: 'soldier', role: 'Scout',     hp: 22, atk: 7,  def: 5, spd: 9, res: 3, ability: { id: 'tax_mobile',    name: 'Tax Mobile of Justice' } },
+    ryan:      { name: 'Ryan Li',          shortName: 'Ryan',      title: 'Investigator',             class: 'soldier', role: 'Scout',     hp: 22, atk: 9,  def: 5, spd: 9, res: 3, ability: { id: 'tax_mobile',    name: 'Tax Mobile of Justice' } },
     sylvester: { name: 'Sylvester Sim',    shortName: 'Sylvester', title: 'Legal Associate',          class: 'soldier', role: 'DPS',       hp: 22, atk: 12, def: 6, spd: 4, res: 2, ability: { id: 'hammer',        name: 'Hammer of Justice' } },
     richmond:  { name: 'Richmond Yeo',     shortName: 'Richmond',  title: 'Auditor',                  class: 'soldier', role: 'Lifesteal', hp: 24, atk: 10, def: 6, spd: 5, res: 2, ability: { id: 'tax_recovery',  name: 'Tax Recovery' } },
     shaun:     { name: 'Shaun Tan',        shortName: 'Shaun',     title: 'Tax Specialist',           class: 'soldier', role: 'Tank',      hp: 28, atk: 8,  def: 10, spd: 2, res: 4, ability: { id: 'sleepless_panda', name: 'Sleepless Panda' } },
@@ -160,22 +160,40 @@ const PLAYER_DEPLOY = [
     { x: 2, y: 7 }, { x: 3, y: 7 }, { x: 4, y: 7 }, { x: 5, y: 7 },
 ];
 
-// Stat bars are rendered as 5 tiers so different-magnitude stats (HP vs RES)
-// can be compared at a glance. Tier = where this value sits in the roster's
-// range for that stat; top unit = 5 segments, weakest = 1.
-const STAT_MIN = {}, STAT_MAX = {};
-for (const stat of ['hp', 'atk', 'def', 'spd', 'res']) {
-    const vals = PLAYER_CHAR_KEYS.map(k => CHARACTERS[k][stat]);
-    STAT_MIN[stat] = Math.min(...vals);
-    STAT_MAX[stat] = Math.max(...vals);
-}
-const STAT_TIER_COUNT = 5;
+// Stat bars scale against fixed per-stat caps so the visual length is an honest
+// fraction of a meaningful max — not a roster-relative tier that exaggerates
+// small differences. Caps sit slightly above the top roster value so the best
+// in class reads near-full (not always pegged) and differences stay readable.
+const STAT_CAPS = {
+    hp:  28,
+    atk: 12,
+    def: 12,
+    spd: 12,
+    res: 12,
+    mov: 4,
+    rng: 2,
+};
 
-function statTier(stat, val) {
-    const min = STAT_MIN[stat], max = STAT_MAX[stat];
-    if (max === min) return STAT_TIER_COUNT;
-    const frac = (val - min) / (max - min);
-    return Math.max(1, Math.min(STAT_TIER_COUNT, Math.ceil(frac * STAT_TIER_COUNT)));
+function statFrac(stat, val) {
+    const cap = STAT_CAPS[stat];
+    if (!cap) return 0;
+    return Math.max(0, Math.min(1, val / cap));
+}
+
+// Resolve a display-time stat value for a roster character, including
+// ability-derived bumps (Ryan's +2 MOV) and class-default fallbacks for
+// MOV and RNG. Returns a plain number.
+function getCharStat(charKey, stat) {
+    const c = CHARACTERS[charKey];
+    if (!c) return 0;
+    if (stat === 'mov') {
+        const base = c.movement ?? CLASS_DEFAULTS[c.class].movement;
+        return c.ability && c.ability.id === 'tax_mobile' ? base + 2 : base;
+    }
+    if (stat === 'rng') {
+        return c.maxRange ?? CLASS_DEFAULTS[c.class].maxRange;
+    }
+    return c[stat] ?? 0;
 }
 
 // Short flavour text for abilities — shown on the unit selection detail panel.
@@ -183,15 +201,15 @@ const ABILITY_DESCRIPTIONS = {
     tax_mobile:        '+2 movement range.',
     hammer:            'Attacks ignore 50% of target DEF.',
     tax_recovery:      'Heal 100% of damage dealt on attack.',
-    sleepless_panda:   'Regenerate 4 HP at the start of each turn.',
+    sleepless_panda:   'Regenerate 3 HP at the start of each turn.',
     blood_donation:    'Heal an adjacent ally for 14 HP.',
     arrow_guard:       'Halves incoming damage from archer attackers.',
     do_work:           'Grant an ally +6 ATK for their next attack.',
     undying:           'Survives lethal damage once at 1 HP.',
     tax_relief:        'Heal an ally within 2 tiles for 12 HP.',
-    future_ceo:        '+3 ATK aura to adjacent allies.',
+    future_ceo:        '+3 ATK aura to allies within 2 tiles.',
     mountain_climbing: '+1 ATK at the start of each turn (max +3).',
-    aura:              '+3 ATK aura to adjacent allies.',
+    aura:              '+3 ATK aura to allies within 2 tiles.',
 };
 
 // Abilities that replace an attack on the action menu (tap an ally to trigger).

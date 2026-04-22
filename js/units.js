@@ -91,10 +91,10 @@ function alliesWithin(team, fx, fy, maxDist, excludeId) {
     return out;
 }
 
-// ATK aura if an ally with Future CEO (Jade) or Aura (The CEO) sits orthogonally
-// adjacent. Does not stack — take the best single source.
+// ATK aura if an ally with Future CEO (Jade) or Aura (The CEO) sits within 2
+// tiles (Manhattan). Does not stack — take the best single source.
 function getAuraAtkBonus(u) {
-    const allies = alliesWithin(u.team, u.x, u.y, 1, u.id);
+    const allies = alliesWithin(u.team, u.x, u.y, 2, u.id);
     let best = 0;
     for (const a of allies) {
         if (hasAbility(a, 'aura')) best = Math.max(best, 3);
@@ -132,7 +132,7 @@ function applyTurnStartAbilities(u) {
     if (!u.alive) return;
     if (hasAbility(u, 'sleepless_panda')) {
         const before = u.hp;
-        u.hp = Math.min(u.maxHp, u.hp + 4);
+        u.hp = Math.min(u.maxHp, u.hp + 3);
         if (u.hp > before) spawnFloatingText('+' + (u.hp - before), u.x, u.y - 0.4, '#7effb0');
     }
     if (hasAbility(u, 'mountain_climbing')) {

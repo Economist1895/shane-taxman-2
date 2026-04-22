@@ -34,16 +34,16 @@ https://economist1895.github.io/shane-taxman-2/
 - **Ryan Li** (Investigator) — Scout soldier with +2 movement (*Tax Mobile of Justice*).
 - **Sylvester Sim** (Legal Associate) — DPS soldier whose *Hammer of Justice* ignores half the target's DEF.
 - **Richmond Yeo** (Auditor) — Lifesteal soldier who heals 100% of damage dealt (*Tax Recovery*).
-- **Shaun Tan** (Tax Specialist) — Tank that regenerates 4 HP per turn (*Sleepless Panda*).
+- **Shaun Tan** (Tax Specialist) — Tank that regenerates 3 HP per turn (*Sleepless Panda*).
 - **Jiawei Tian** (Software Developer) — Medic soldier with active heal *Blood Donation* (+14 HP to an adjacent ally).
 - **Annie Khoo** (Outreach Officer) — Archer tank with *Protection from Arrows* (halves damage from archer attackers).
 - **Shane Soh** (Manager) — Buffer archer whose *Do Work!* grants an ally +6 ATK on their next attack.
 - **Jasper Samuel** (Policy Officer) — Glass-cannon archer who survives lethal damage once at 1 HP (*Undying Project*).
 - **Karishma Jayakumar** (Customer Service Officer) — Ranged healer with *Tax Relief* (+12 HP to an ally within 2 tiles).
-- **Jade Chen** (Policy Officer) — Buffer mage with a +3 ATK adjacency aura (*Future CEO*).
+- **Jade Chen** (Policy Officer) — Buffer mage with a +3 ATK aura to allies within 2 tiles (*Future CEO*).
 - **Bethany Su** (AI Lead) — DPS mage who gains +1 ATK at the start of each turn, capping at +3 (*Mountain Climbing*).
 
-The enemy team is led by **The CEO** (a boss archer with range 2-3 and a +3 ATK aura) and their bodyguard, the **Director**, plus a rotating cast of soldier / archer / mage minions.
+The enemy team is led by **The CEO** (a boss archer with range 2-3 and a +3 ATK aura to allies within 2 tiles) and their bodyguard, the **Director**, plus a rotating cast of soldier / archer / mage minions.
 
 ## Stats at a glance
 
@@ -56,6 +56,8 @@ The enemy team is led by **The CEO** (a boss archer with range 2-3 and a +3 ATK 
 | **SPD** | A 4+ SPD lead lets you strike twice in one exchange. |
 | **RNG** | Attack range in tiles. Soldier 1, Archer 2, Mage 1-2, The CEO 2-3. |
 | **MOV** | Tiles moved per turn (2 by default, 4 for Ryan). |
+
+On the squad-select screen, HP/ATK/DEF/SPD/RES are drawn as bars scaled against a fixed per-stat cap (so lengths compare honestly across the roster), with HP in green and the combat stats in cyan. RNG and MOV are shown as plain text next to the class name.
 
 Trees and water block **movement** — no one can step on them — but ranged attacks fly over both.
 

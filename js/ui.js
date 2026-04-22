@@ -56,15 +56,15 @@ function onSelectCardClick(key) {
     refreshSelectUI();
 }
 
+// Bar length = val / STAT_CAPS[stat] as a continuous fraction. Honest scaling
+// across the full roster — the best-in-stat reads near-full, not always pegged.
 function statBar(label, val, stat) {
-    const tier = statTier(stat, val);
-    let segs = '';
-    for (let i = 1; i <= STAT_TIER_COUNT; i++) {
-        segs += '<span class="sb-seg' + (i <= tier ? ' filled' : '') + '"></span>';
-    }
+    const pct = (statFrac(stat, val) * 100).toFixed(1) + '%';
     return '<div class="stat-bar">' +
         '<span class="sb-label">' + label + '</span>' +
-        '<span class="sb-track">' + segs + '</span>' +
+        '<span class="sb-track">' +
+            '<span class="sb-fill sb-fill--' + stat + '" style="width:' + pct + '"></span>' +
+        '</span>' +
         '<span class="sb-val">' + val + '</span>' +
         '</div>';
 }
@@ -75,7 +75,7 @@ function previewChar(key) {
     const minR = c.minRange ?? cls.minRange;
     const maxR = c.maxRange ?? cls.maxRange;
     const rngStr = minR === maxR ? String(maxR) : minR + '-' + maxR;
-    const move = c.movement ?? cls.movement;
+    const move = getCharStat(key, 'mov');
 
     let ability;
     if (c.ability) {

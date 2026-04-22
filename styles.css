@@ -876,21 +876,25 @@ html, body {
 
 .sb-track {
     flex: 1 1 auto;
+    position: relative;
     height: 10px;
-    display: flex;
-    gap: 2px;
-}
-
-.sb-seg {
-    flex: 1 1 0;
     background: var(--bg-void);
     border: 1px solid var(--navy);
+    overflow: hidden;
 }
 
-.sb-seg.filled {
+.sb-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
     background: var(--cyan);
-    border-color: #9af3ff;
-    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* HP reads as a life bar — green instead of the combat-stat cyan. */
+.sb-fill--hp {
+    background: var(--green);
 }
 
 .sb-val {
